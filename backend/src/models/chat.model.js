@@ -11,9 +11,10 @@ const chatSchema = new mongoose.Schema(
       type: String,
       trim: true,
       required: true,
+      default:"new chat"
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 const Chat = mongoose.model("Chat", chatSchema);
