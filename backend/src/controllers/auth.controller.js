@@ -1,7 +1,8 @@
 import User from "../models/user.model.js";
 import jwt from "jsonwebtoken";
 import { sendEmail } from "../services/mail.service.js";
-const registerUser = async (req, res) => {
+
+export const registerUser = async (req, res) => {
   try {
     const { username, email, password } = req.body;
 
@@ -28,43 +29,83 @@ const registerUser = async (req, res) => {
       });
     }
 
-    const isUserExist = await User.findOne({
+    const existingUser = await User.findOne({
       $or: [{ email }, { username }],
     });
 
-    if (isUserExist) {
+    if (existingUser) {
       return res.status(409).json({
         success: false,
-        message: "User already exists",
+        message: "Username or email already exists",
       });
     }
 
-    const newUser = await User.create({
+    const user = await User.create({
       username,
       email,
       password,
     });
-    await sendEmail({
-      to: email,
-      subject: "Welcome to Perplex",
-      text: `Hello ${username},
 
-Welcome to Perplex! 🎉
+    const token = jwt.sign(
+      {
+        id: user._id,
+      },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "7d",
+      },
+    );
 
-We're excited to have you join our community.
+    const emailVerificationToken = jwt.sign(
+      {
+        id: user._id,
+      },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "1d",
+      },
+    );
 
-Your account has been successfully created, and you can now start connecting with others, sharing messages, and exploring everything Perplex has to offer.
+    const verificationLink = `http://localhost:3000/api/auth/verify-email/${emailVerificationToken}`;
 
-If you have any questions or need assistance, feel free to reach out to our team.
+    try {
+      await sendEmail({
+        to: user.email,
+        subject: "Verify Your Email",
+        html: `
+          <div style="font-family: Arial, sans-serif;">
+            <h2>Welcome to Perplex 🎉</h2>
 
-Thank you for choosing Perplex.
+            <p>Hello ${user.username},</p>
 
-Best regards,
-The Perplex Team`,
-    });
-    const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, {
-      expiresIn: "7d",
-    });
+            <p>
+              Thank you for registering.
+              Please verify your email address by clicking the button below.
+            </p>
+
+            <a
+              href="${verificationLink}"
+              style="
+                background:#2563eb;
+                color:#ffffff;
+                padding:12px 20px;
+                text-decoration:none;
+                border-radius:6px;
+                display:inline-block;
+              "
+            >
+              Verify Email
+            </a>
+
+            <p>This link will expire in 24 hours.</p>
+
+            <p>Best regards,<br/>The Perplex Team</p>
+          </div>
+        `,
+      });
+    } catch (mailError) {
+      console.log("Mail Error:", mailError.message);
+    }
 
     res.cookie("token", token, {
       httpOnly: true,
@@ -75,11 +116,12 @@ The Perplex Team`,
 
     return res.status(201).json({
       success: true,
-      message: "User registered successfully",
+      message: "User registered successfully. Please verify your email.",
       user: {
-        id: newUser._id,
-        username: newUser.username,
-        email: newUser.email,
+        id: user._id,
+        username: user.username,
+        email: user.email,
+        verified: user.verified,
       },
     });
   } catch (error) {
@@ -91,4 +133,137 @@ The Perplex Team`,
   }
 };
 
-export default registerUser;
+export const verifyEmail = async (req, res) => {
+  try {
+    const { token } = req.params;
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    const user = await User.findById(decoded.id);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    if (user.verified) {
+      return res.status(400).json({
+        success: false,
+        message: "Email already verified",
+      });
+    }
+
+    user.verified = true;
+
+    await user.save();
+    const html = `<h1>Email verified successfully </h1><p>your email has been verified login into your account</p>
+    <a href="http://localhost:3000/login">Go to login </a>
+    `;
+    res.send(html);
+  } catch (error) {
+    return res.status(400).json({
+      success: false,
+      message: "Invalid or expired verification token",
+      error: error.message,
+    });
+  }
+};
+
+export const login = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    if (!email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "All fields are required",
+      });
+    }
+    const user = await User.findOne({
+      email,
+    }).select("+password");
+    if (!user) {
+      return res.status(400).json({
+        success: false,
+        message: "invalid credentials",
+      });
+    }
+    const isMatch = await user.comparePassword(password);
+    if (!isMatch) {
+      return res.status(400).json({
+        success: false,
+        message: "invalid credentials",
+      });
+    }
+    if (!user.verified) {
+      return res.status(400).json({
+        success: false,
+        message: "please verify email before loggin ",
+      });
+    }
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "7d",
+    });
+    res.cookie("token", token, {
+      httpOnly: true,
+      sameSite: "strict",
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+    return res.status(200).json({
+      success: true,
+      message: "user logged in",
+      user: {
+        id: user._id,
+        username: user.username,
+        email: user.email,
+      },
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "internal server error",
+      error: error.message,
+    });
+  }
+};
+
+export const getMe = async (req, res) => {
+  try {
+    const token = req.cookies.token;
+    if (!token) {
+      return res.status(401).json({
+        success: false,
+        message: "unauthorized access",
+      });
+    }
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await User.findById(decoded.id);
+    if(!user){
+      return res.status(400).json({
+        success:false,
+        message:"no user exist"
+      })
+    }
+    return res.status(200).json({
+      success: true,
+      user: {
+        id: user._id,
+        username: user.username,
+        email: user.email,
+        isVerified: user.verified,
+      },
+    });
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+      error: error.message,
+    });
+  } catch (error) {
+    return res.status(401).json({
+      success: false,
+      message: "Invalid token",
+    });
+  }
+};
