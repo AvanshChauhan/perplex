@@ -29,14 +29,12 @@ export const registerUser = async (req, res) => {
       });
     }
 
-    const existingUser = await User.findOne({
-      $or: [{ email }, { username }],
-    });
+    const existingUser = await User.findOne({ email });
 
     if (existingUser) {
       return res.status(409).json({
         success: false,
-        message: "Username or email already exists",
+        message: "Email already exists",
       });
     }
 
@@ -107,13 +105,6 @@ export const registerUser = async (req, res) => {
       console.log("Mail Error:", mailError.message);
     }
 
-    res.cookie("token", token, {
-      httpOnly: true,
-      sameSite: "strict",
-      secure: process.env.NODE_ENV === "production",
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
-
     return res.status(201).json({
       success: true,
       message: "User registered successfully. Please verify your email.",
@@ -158,10 +149,7 @@ export const verifyEmail = async (req, res) => {
     user.verified = true;
 
     await user.save();
-    const html = `<h1>Email verified successfully </h1><p>your email has been verified login into your account</p>
-    <a href="http://localhost:3000/login">Go to login </a>
-    `;
-    res.send(html);
+    return res.redirect("http://localhost:5173/login?verified=true");
   } catch (error) {
     return res.status(400).json({
       success: false,
@@ -246,6 +234,12 @@ export const getMe = async (req, res) => {
         message:"no user exist"
       })
     }
+    if (!user.verified) {
+      return res.status(401).json({
+        success: false,
+        message: "unauthorized access - email not verified",
+      });
+    }
     return res.status(200).json({
       success: true,
       user: {
@@ -255,15 +249,31 @@ export const getMe = async (req, res) => {
         isVerified: user.verified,
       },
     });
-    return res.status(500).json({
-      success: false,
-      message: "Internal server error",
-      error: error.message,
-    });
   } catch (error) {
     return res.status(401).json({
       success: false,
       message: "Invalid token",
+    });
+  }
+};
+
+export const logout = async (req, res) => {
+  try {
+    res.cookie("token", "", {
+      httpOnly: true,
+      expires: new Date(0),
+      sameSite: "strict",
+      secure: process.env.NODE_ENV === "production",
+    });
+    return res.status(200).json({
+      success: true,
+      message: "Logged out successfully",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+      error: error.message,
     });
   }
 };

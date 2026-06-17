@@ -1,1 +1,14 @@
 @import "tailwindcss";
+
+@theme {
+  --font-sans: "Google Sans", "Outfit", "Poppins", "ui-sans-serif", "system-ui", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "Roboto", "Helvetica Neue", "Arial", "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  
+  --font-google-sans: "Google Sans", sans-serif;
+  --font-montserrat: "Montserrat", sans-serif;
+  --font-national-park: "National Park", sans-serif;
+  --font-open-sans: "Open Sans", sans-serif;
+  --font-outfit: "Outfit", sans-serif;
+  --font-patrick-hand: "Patrick Hand", cursive;
+  --font-poppins: "Poppins", sans-serif;
+  --font-shadows-into-light: "Shadows Into Light", cursive;
+}
