@@ -27,12 +27,33 @@ export const AuthProvider = ({ children }) => {
     checkAuth();
   }, []);
 
-  const login = (userData) => {
-    setUser(userData);
+  const login = async (email, password) => {
+    try {
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+      const data = await response.json();
+      if (response.ok && data.success) {
+        setUser(data.user);
+        return { success: true };
+      } else {
+        return { success: false, message: data.message || "Login failed" };
+      }
+    } catch (error) {
+      console.error("Login failed:", error);
+      return { success: false, message: "Network error. Please try again." };
+    }
   };
 
-  const logout = () => {
-    setUser(null);
+  const logout = async () => {
+    try {
+      await fetch("/api/auth/logout", { method: "POST" });
+      setUser(null);
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
   };
 
   return (

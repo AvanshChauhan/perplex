@@ -1,11 +1,15 @@
 import React from "react";
 import { useNavigate } from "react-router";
 import { useAuth } from "../auth/context/AuthContext";
-
+import { useChat } from "../hooks/useChat";
+import { useEffect } from "react";
 const Dashboard = () => {
+  const chat =useChat()
   const { user, logout } = useAuth();
   const navigate = useNavigate();
-
+  useEffect(()=>{
+    chat.initialiseSocketConnection()
+  },[])
   const handleLogout = async () => {
     try {
       const response = await fetch("/api/auth/logout", {
