@@ -1,33 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useNavigate } from "react-router";
+import { useAuth } from "../auth/context/AuthContext";
 
 const Dashboard = () => {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const { user, logout } = useAuth();
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const response = await fetch("/api/auth/get-me");
-        const data = await response.json();
-        
-        if (response.ok && data.success) {
-          setUser(data.user);
-        } else {
-          // Redirect to login if user session is invalid or unauthorized
-          navigate("/login");
-        }
-      } catch (err) {
-        console.error("Error fetching user session:", err);
-        navigate("/login");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUser();
-  }, [navigate]);
 
   const handleLogout = async () => {
     try {
@@ -36,28 +13,20 @@ const Dashboard = () => {
       });
 
       if (response.ok) {
+        logout();
         navigate("/login");
       } else {
         console.error("Logout request failed");
         // Clear local state anyway
+        logout();
         navigate("/login");
       }
     } catch (err) {
       console.error("Error during logout:", err);
+      logout();
       navigate("/login");
     }
   };
-
-  if (loading) {
-    return (
-      <div className="min-h-screen w-screen bg-slate-50 flex items-center justify-center font-sans">
-        <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-          <p className="text-slate-500 font-medium text-sm">Checking your session...</p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen w-screen bg-slate-50 flex flex-col font-sans text-slate-800">

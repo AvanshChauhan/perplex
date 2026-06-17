@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router";
+import { useAuth } from "../context/AuthContext";
 
 const Login = () => {
+  const { login } = useAuth();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -52,7 +54,8 @@ const Login = () => {
         throw new Error(data.message || "Failed to log in");
       }
 
-      // If successful, navigate to Dashboard
+      // If successful, update global auth state and navigate to Dashboard
+      login(data.user);
       navigate("/");
     } catch (err) {
       // If error indicates email is not verified, show a helpful custom message
