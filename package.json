@@ -24,6 +24,7 @@
     "langchain": "^1.4.4",
     "mongoose": "^9.6.3",
     "nodemailer": "^8.0.10",
+    "socket.io": "^4.8.3",
     "vite": "^8.0.16"
   }
 }
