@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link, useSearchParams } from "react-router";
 import { useAuth } from "../context/AuthContext";
-
+import logo from "../../../assets/logo.png"
 const Login = () => {
   const [searchParams] = useSearchParams();
   const verified = searchParams.get("verified") === "true";
@@ -53,10 +53,10 @@ const Login = () => {
         {/* Left Section: Branding & Info */}
         <div className="w-full md:w-1/2 p-8 md:p-12 lg:p-16 flex flex-col justify-between text-slate-800">
           <div className="flex items-center gap-2">
-            <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-blue-500/30">
-              P
-            </div>
-            <span className="font-extrabold text-2xl tracking-wider text-slate-900">Perplex</span>
+            <div className="w-40 h-10 rounded-xl flex items-center justify-center ">
+           <span className=""><img src={logo} /></span>
+           </div>
+            {/* <span className="font-extrabold text-2xl tracking-wider text-slate-900"><img src={logo} /></span> */}
           </div>
 
           <div className="my-auto py-12 md:py-0">

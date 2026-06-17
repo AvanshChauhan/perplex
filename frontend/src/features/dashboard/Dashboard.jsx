@@ -3,6 +3,7 @@ import { useNavigate } from "react-router";
 import { useAuth } from "../auth/context/AuthContext";
 import { useChat } from "../hooks/useChat";
 import { useEffect } from "react";
+import logo from "../../assets/logo.png"
 const Dashboard = () => {
   const chat =useChat()
   const { user, logout } = useAuth();
@@ -37,10 +38,9 @@ const Dashboard = () => {
       {/* Top Navbar */}
       <header className="h-16 px-6 md:px-12 bg-white border-b border-slate-200 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white font-bold shadow-md">
-            P
+          <div className="w-35 h-25 rounded-lg flex items-center justify-center text-white font-bold">
+            <span className=""><img src={logo} alt="" srcset="" /></span>
           </div>
-          <span className="font-bold text-lg text-slate-900 tracking-wide">Perplex</span>
         </div>
 
         <div className="flex items-center gap-4">
