@@ -219,27 +219,7 @@ export const login = async (req, res) => {
 
 export const getMe = async (req, res) => {
   try {
-    const token = req.cookies.token;
-    if (!token) {
-      return res.status(401).json({
-        success: false,
-        message: "unauthorized access",
-      });
-    }
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const user = await User.findById(decoded.id);
-    if(!user){
-      return res.status(400).json({
-        success:false,
-        message:"no user exist"
-      })
-    }
-    if (!user.verified) {
-      return res.status(401).json({
-        success: false,
-        message: "unauthorized access - email not verified",
-      });
-    }
+    const user = req.user;
     return res.status(200).json({
       success: true,
       user: {
@@ -250,9 +230,10 @@ export const getMe = async (req, res) => {
       },
     });
   } catch (error) {
-    return res.status(401).json({
+    return res.status(500).json({
       success: false,
-      message: "Invalid token",
+      message: "Internal server error",
+      error: error.message,
     });
   }
 };

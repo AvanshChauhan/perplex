@@ -11,8 +11,8 @@ const startServer = async () => {
   try {
     await connectDB();
 
-    app.listen(PORT, () => {
-      console.log(`Server is running on port ${PORT}`);
+    httpServer.listen(PORT, () => {
+      console.log(`Server and Socket.io are running on port ${PORT}`);
     });
   } catch (error) {
     console.error(`Failed to start server: ${error.message}`);
@@ -21,6 +21,3 @@ const startServer = async () => {
 };
 
 startServer();
-httpServer.listen(PORT,()=>{
-  console.log("socket io is running")
-})
