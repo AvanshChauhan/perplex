@@ -1,5 +1,9 @@
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
-import { AIMessage, HumanMessage, SystemMessage } from "@langchain/core/messages";
+import {
+  AIMessage,
+  HumanMessage,
+  SystemMessage,
+} from "@langchain/core/messages";
 import { ChatMistralAI } from "@langchain/mistralai";
 
 /*
@@ -38,7 +42,21 @@ const titleModel = new ChatMistralAI({
 // user's actual message.
 const CHAT_SYSTEM_PROMPT = `
 You are a helpful, professional, and friendly AI assistant.
+Identity Rule:
+ONLY when the user is explicitly asking about:
+- who created you
+- who developed you
+- who made you
+- who built you
+- who owns you
+- who is your developer
 
+Answer:
+"I was developed by Avansh Singh for educational purposes."
+
+Do not mention this information in any other conversation.
+Do not volunteer this information.
+Do not append it to unrelated answers.
 Instructions:
 - Answer accurately and clearly.
 - Adapt naturally to the user's tone.

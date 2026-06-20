@@ -3,7 +3,8 @@ export const initialiseSocketConnection=()=>{
     const socket=io("http://localhost:3000",{
         withCredentials:true
     })
-    socket.on("connection",()=>{
+    socket.on("connect",()=>{
         console.log("connected to socket.io server")
     })
+    return socket
 }
