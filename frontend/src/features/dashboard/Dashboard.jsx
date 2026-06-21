@@ -3,7 +3,7 @@ import { NavLink, useNavigate } from "react-router";
 import { useAuth } from "../auth/context/AuthContext";
 import { useChat } from "../hooks/useChat";
 import logo from "../../assets/logo.png";
-
+import fav from "../../../public/fav.png";
 const getChatId = (chat) => chat?._id || chat?.id;
 
 const createLocalMessage = (role, content) => ({
@@ -34,7 +34,8 @@ const SUGGESTED_PROMPTS = [
   {
     title: "Draft Copy",
     desc: "Draft a professional email asking for a project deadline extension",
-    prompt: "Draft a professional email asking for a project deadline extension",
+    prompt:
+      "Draft a professional email asking for a project deadline extension",
   },
   {
     title: "Brainstorm SaaS Ideas",
@@ -205,7 +206,9 @@ const Dashboard = () => {
       setActiveChatId(serverChatId);
       setMessagesByChat((current) => {
         const cleaned = { ...current };
-        const existingMessages = activeChatId ? current[activeChatId] || [] : [];
+        const existingMessages = activeChatId
+          ? current[activeChatId] || []
+          : [];
 
         delete cleaned["pending-chat"];
 
@@ -213,7 +216,9 @@ const Dashboard = () => {
           ...cleaned,
           [serverChatId]: activeChatId
             ? [
-                ...existingMessages.filter((item) => item._id !== localUserMessage._id),
+                ...existingMessages.filter(
+                  (item) => item._id !== localUserMessage._id,
+                ),
                 ...nextMessages,
               ]
             : nextMessages,
@@ -221,8 +226,11 @@ const Dashboard = () => {
       });
 
       setChats((current) => {
-        const existing = current.filter((item) => getChatId(item) !== serverChatId);
-        const chatTitle = data.chat?.title || data.title || message.slice(0, 48);
+        const existing = current.filter(
+          (item) => getChatId(item) !== serverChatId,
+        );
+        const chatTitle =
+          data.chat?.title || data.title || message.slice(0, 48);
 
         return [
           {
@@ -236,7 +244,9 @@ const Dashboard = () => {
         ];
       });
     } catch (err) {
-      setError(err.message || "Something went wrong while sending the message.");
+      setError(
+        err.message || "Something went wrong while sending the message.",
+      );
       setMessagesByChat((current) => ({
         ...current,
         [pendingChatId]: (current[pendingChatId] || []).filter(
@@ -271,19 +281,26 @@ const Dashboard = () => {
       <div className="flex h-full flex-col bg-white">
         {/* Sidebar Header */}
         <div className="flex h-16 items-center justify-between border-b border-slate-200 px-4 shrink-0">
-          <img
-            src={logo}
-            alt="Perplex"
-            className="h-9 w-auto object-contain"
-          />
+          <img src={logo} alt="Perplex" className="h-9 w-auto object-contain" />
           {isMobile ? (
             <button
               onClick={() => setIsMobileSidebarOpen(false)}
               className="p-1.5 rounded-lg text-slate-500 hover:bg-slate-100 md:hidden"
               title="Close sidebar"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="w-5 h-5"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M6 18L18 6M6 6l12 12"
+                />
               </svg>
             </button>
           ) : (
@@ -292,8 +309,19 @@ const Dashboard = () => {
               className="hidden md:inline-flex p-1.5 rounded-lg text-slate-400 hover:text-slate-650 hover:bg-slate-100"
               title="Collapse sidebar"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="w-5 h-5"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M15.75 19.5L8.25 12l7.5-7.5"
+                />
               </svg>
             </button>
           )}
@@ -354,10 +382,14 @@ const Dashboard = () => {
                         }`}
                       >
                         <div className="min-w-0 flex-1 pr-6">
-                          <span className={`block truncate text-sm font-semibold ${isActive ? "text-white" : "text-slate-800"}`}>
+                          <span
+                            className={`block truncate text-sm font-semibold ${isActive ? "text-white" : "text-slate-800"}`}
+                          >
                             {item.title || "New chat"}
                           </span>
-                          <span className={`mt-0.5 block truncate text-xs ${isActive ? "text-slate-300" : "text-slate-450"}`}>
+                          <span
+                            className={`mt-0.5 block truncate text-xs ${isActive ? "text-slate-300" : "text-slate-450"}`}
+                          >
                             {item.preview || "Open conversation"}
                           </span>
                         </div>
@@ -369,11 +401,24 @@ const Dashboard = () => {
                         }}
                         title="Delete chat"
                         className={`absolute right-2.5 top-1/2 -translate-y-1/2 p-1.5 rounded-lg opacity-0 group-hover:opacity-100 hover:bg-red-50 hover:text-red-600 transition-all duration-150 ${
-                          isActive ? "text-slate-400 hover:text-red-200 hover:bg-slate-800" : "text-slate-400"
+                          isActive
+                            ? "text-slate-400 hover:text-red-200 hover:bg-slate-800"
+                            : "text-slate-400"
                         }`}
                       >
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor" className="w-3.5 h-3.5">
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          strokeWidth={1.8}
+                          stroke="currentColor"
+                          className="w-3.5 h-3.5"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
+                          />
                         </svg>
                       </button>
                     </div>
@@ -402,8 +447,19 @@ const Dashboard = () => {
             title="Sign out"
             className="w-full flex items-center justify-center gap-2 rounded-xl border border-slate-200 px-3 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 active:bg-slate-100 transition-all duration-200"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className="w-4 h-4"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9"
+              />
             </svg>
             Sign out
           </button>
@@ -414,17 +470,16 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen w-screen bg-slate-50 font-sans text-slate-900 overflow-hidden flex relative">
-      
       {/* 1. Mobile Sidebar Drawer Overlay */}
       {isMobileSidebarOpen && (
-        <div 
+        <div
           className="fixed inset-0 z-40 bg-slate-900/40 backdrop-blur-xs md:hidden"
           onClick={() => setIsMobileSidebarOpen(false)}
         />
       )}
-      
+
       {/* 2. Mobile Sidebar Drawer Container */}
-      <aside 
+      <aside
         className={`fixed inset-y-0 left-0 z-50 flex w-72 flex-col border-r border-slate-200 bg-white transform ${
           isMobileSidebarOpen ? "translate-x-0" : "-translate-x-full"
         } transition-transform duration-300 ease-in-out md:hidden`}
@@ -433,7 +488,7 @@ const Dashboard = () => {
       </aside>
 
       {/* 3. Desktop/Tablet Sidebar (Collapsible) */}
-      <aside 
+      <aside
         className={`hidden md:flex flex-col border-r border-slate-200 bg-white h-screen shrink-0 transition-all duration-300 ease-in-out ${
           isSidebarCollapsed ? "w-0 overflow-hidden border-r-0" : "w-72"
         }`}
@@ -443,7 +498,6 @@ const Dashboard = () => {
 
       {/* 4. Main Panel */}
       <div className="flex flex-1 flex-col h-screen overflow-hidden min-w-0">
-        
         {/* Header */}
         <header className="sticky top-0 z-20 flex h-16 items-center justify-between border-b border-slate-200 bg-white/85 backdrop-blur-md px-4 md:px-6 shrink-0">
           <div className="flex items-center gap-3">
@@ -453,37 +507,71 @@ const Dashboard = () => {
               className="p-2 text-slate-500 hover:bg-slate-100 rounded-lg md:hidden"
               title="Open menu"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="w-6 h-6"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+                />
               </svg>
             </button>
-            
+
             {/* Sidebar Toggle (Desktop/Tablet Only) */}
             <button
               onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
               className="hidden md:inline-flex items-center justify-center p-2 text-slate-500 hover:bg-slate-100 hover:text-slate-900 rounded-lg"
               title={isSidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
             >
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M9 4.5v15m6-15v15m-12-15h18a2.25 2.25 0 012.25 2.25v13.5a2.25 2.25 0 01-2.25 2.25h-18A2.25 2.25 0 011.5 18V6.75A2.25 2.25 0 013.75 4.5z" />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="w-5 h-5"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M9 4.5v15m6-15v15m-12-15h18a2.25 2.25 0 012.25 2.25v13.5a2.25 2.25 0 01-2.25 2.25h-18A2.25 2.25 0 011.5 18V6.75A2.25 2.25 0 013.75 4.5z"
+                />
               </svg>
             </button>
 
             <div>
               <h1 className="text-sm font-bold text-slate-800 md:text-base truncate max-w-[180px] sm:max-w-[300px] md:max-w-md">
-                {activeChatId 
-                  ? chats.find(c => getChatId(c) === activeChatId)?.title || "Chat" 
+                {activeChatId
+                  ? chats.find((c) => getChatId(c) === activeChatId)?.title ||
+                    "Chat"
                   : `Welcome back, ${user?.username || "there"}`}
               </h1>
             </div>
           </div>
-          
+
           <button
             onClick={handleNewChat}
             className="flex items-center gap-1.5 rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-slate-800 transition"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.2} stroke="currentColor" className="w-4 h-4">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={2.2}
+              stroke="currentColor"
+              className="w-4 h-4"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M12 4.5v15m7.5-7.5h-15"
+              />
             </svg>
             <span className="hidden sm:inline">New chat</span>
           </button>
@@ -491,11 +579,9 @@ const Dashboard = () => {
 
         {/* Main Content Area */}
         <main className="flex-1 flex flex-col overflow-hidden relative bg-slate-50">
-          
           {/* Scrollable Message viewport */}
           <div className="flex-1 overflow-y-auto px-4 py-6 md:px-8">
             <div className="mx-auto flex w-full max-w-3xl flex-col gap-6 pb-36">
-              
               {error && (
                 <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 shadow-xs flex items-start gap-2 animate-fade-in">
                   <span>⚠️</span>
@@ -505,9 +591,25 @@ const Dashboard = () => {
 
               {isLoadingMessages && (
                 <div className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-500 shadow-xs flex items-center gap-2">
-                  <svg className="animate-spin h-4 w-4 text-cyan-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  <svg
+                    className="animate-spin h-4 w-4 text-cyan-600"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
                   </svg>
                   <span>Loading chat history...</span>
                 </div>
@@ -520,9 +622,10 @@ const Dashboard = () => {
                     What should we explore?
                   </h2>
                   <p className="mt-4 max-w-lg text-sm sm:text-base leading-relaxed text-slate-505 text-slate-500">
-                    Ask a question or select a topic below to start a conversation.
+                    Ask a question or select a topic below to start a
+                    conversation.
                   </p>
-                  
+
                   {/* Suggested Prompts Grid */}
                   <div className="mt-8 grid w-full max-w-2xl grid-cols-1 gap-3 sm:grid-cols-2">
                     {SUGGESTED_PROMPTS.map((item, idx) => (
@@ -560,8 +663,8 @@ const Dashboard = () => {
                           </div>
                         ) : (
                           <div className="flex gap-4 w-full items-start">
-                            <div className="flex h-8 w-8 shrink-0 select-none items-center justify-center rounded-lg bg-cyan-600 text-xs font-bold text-white shadow-sm">
-                              P
+                            <div className="flex h-8 w-15 shrink-0 select-none items-center justify-center rounded-lg">
+                              <img src={fav} alt="" srcset="" />
                             </div>
                             <div className="flex-1 min-w-0 text-slate-800 text-sm leading-relaxed pt-1 whitespace-pre-wrap">
                               {message.content}
@@ -577,8 +680,8 @@ const Dashboard = () => {
               {isSending && (
                 <div className="flex justify-start w-full">
                   <div className="flex gap-4 w-full items-start">
-                    <div className="flex h-8 w-8 shrink-0 select-none items-center justify-center rounded-lg bg-cyan-600 text-xs font-bold text-white shadow-sm">
-                      P
+                    <div className="flex h-8 w-15 shrink-0 select-none items-center justify-center rounded-lg">
+                      <img src={fav} alt="" srcset="" />
                     </div>
                     <div className="flex items-center gap-1.5 pt-3">
                       <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-slate-400 [animation-delay:-0.3s]"></span>
@@ -616,23 +719,48 @@ const Dashboard = () => {
                   className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-cyan-600 text-white transition-all hover:bg-cyan-700 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400 shadow-sm"
                 >
                   {isSending ? (
-                    <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    <svg
+                      className="animate-spin h-5 w-5"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      ></circle>
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                      ></path>
                     </svg>
                   ) : (
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.2} stroke="currentColor" className="w-4 h-4">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 10.5L12 3m0 0l7.5 7.5M12 3v18" />
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth={2.2}
+                      stroke="currentColor"
+                      className="w-4 h-4"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M4.5 10.5L12 3m0 0l7.5 7.5M12 3v18"
+                      />
                     </svg>
                   )}
                 </button>
               </div>
             </form>
           </div>
-
         </main>
       </div>
-
     </div>
   );
 };
