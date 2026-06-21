@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "https://perplex-ankb.onrender.com/api/:path*"
+    }
+  ]
+}
