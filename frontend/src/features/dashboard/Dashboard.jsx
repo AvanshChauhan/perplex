@@ -699,7 +699,7 @@ const Dashboard = () => {
           {/* Input Panel pinned at the bottom */}
           <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-slate-50 via-slate-50/95 to-transparent pt-12 pb-6 px-4 md:px-8 shrink-0">
             <form onSubmit={handleSubmit} className="mx-auto max-w-3xl">
-              <div className="flex items-end gap-2 rounded-2xl border border-slate-200 bg-white p-2 shadow-md focus-within:border-cyan-500 focus-within:ring-4 focus-within:ring-cyan-50 transition-all duration-205 transition-all duration-200">
+              <div className="flex items-end gap-2 rounded-2xl border border-slate-200 bg-white p-2 shadow-md focus-within:border-cyan-500 focus-within:ring-4 focus-within:ring-cyan-50 transition-all duration-200">
                 <textarea
                   value={draft}
                   onChange={(event) => setDraft(event.target.value)}

@@ -64,7 +64,8 @@ export const registerUser = async (req, res) => {
       },
     );
 
-    const verificationLink = `http://localhost:3000/api/auth/verify-email/${emailVerificationToken}`;
+    const apiUrl = process.env.API_URL || `http://localhost:${process.env.PORT || 3000}`;
+    const verificationLink = `${apiUrl}/api/auth/verify-email/${emailVerificationToken}`;
 
     try {
       await sendEmail({
@@ -149,7 +150,8 @@ export const verifyEmail = async (req, res) => {
     user.verified = true;
 
     await user.save();
-    return res.redirect("http://localhost:5173/login?verified=true");
+    const clientUrl = process.env.CLIENT_URL || "http://localhost:5173";
+    return res.redirect(`${clientUrl}/login?verified=true`);
   } catch (error) {
     return res.status(400).json({
       success: false,
